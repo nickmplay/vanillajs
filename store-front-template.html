@@ -1,102 +1,132 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>Sparrow Photography</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<style>
-			body {
-				margin: 0 auto;
-				max-width: 50em;
-				width: 88%;
-			}
+<head>
+  <meta charset="utf-8">
+  <title>Sparrow Photography</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0 auto;
+      max-width: 50em;
+      width: 88%;
+    }
 
 
-			/**
+    /**
 			 * Grid Layout
 			 */
 
-			@media (min-width: 20em) {
-				#photos {
-					display: grid;
-					grid-template-columns: repeat(2, 1fr);
-					grid-template-rows: 1fr;
-					grid-column-gap: 2em;
-					grid-row-gap: 2em;
-				}
-			}
+    @media (min-width: 20em) {
+      #photos {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: 1fr;
+        grid-column-gap: 2em;
+        grid-row-gap: 2em;
+      }
+    }
 
-			@media (min-width: 32em) {
-				#photos {
-					grid-template-columns: repeat(3, 1fr);
-				}
-			}
+    @media (min-width: 32em) {
+      #photos {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
 
-			@media (min-width: 42em) {
-				#photos {
-					grid-template-columns: repeat(4, 1fr);
-				}
-			}
+    @media (min-width: 42em) {
+      #photos {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
 
 
-			/**
+    /**
 			 * Nav Menu
 			 */
 
-			.nav {
-				padding: 1em 0;
-			}
+    .nav {
+      padding: 1em 0;
+    }
 
-			.nav a {
-				text-decoration: none;
-			}
+    .nav a {
+      text-decoration: none;
+    }
 
-			.nav a:focus,
-			.nav a:hover {
-				text-decoration: underline;
-			}
+    .nav a:focus,
+    .nav a:hover {
+      text-decoration: underline;
+    }
 
 
-			/**
+    /**
 			 * Footer
 			 */
 
-			footer {
-				border-top: 1px solid #e5e5e5;
-				margin-top: 5em;
-			}
+    footer {
+      border-top: 1px solid #e5e5e5;
+      margin-top: 5em;
+    }
 
 
-			/**
+    /**
 			 * Responsive images
 			 */
 
-			img {
-				height: auto;
-				max-width: 100%;
-			}
-		</style>
-	</head>
-	<body>
+    img {
+      height: auto;
+      max-width: 100%;
+    }
+  </style>
+</head>
 
-		<nav class="nav">
-			<a class="logo" href="index.html"><strong>Sparrow Photography</strong></a>
-		</nav>
+<body>
 
-		<h1>Sparrow Photography</h1>
+  <nav class="nav">
+    <a class="logo" href="index.html"><strong>Sparrow Photography</strong></a>
+  </nav>
 
-		<div id="app">Loading...</div>
+  <h1>Sparrow Photography</h1>
 
-
-		<footer>
-			<p><em>Photos by Jack Sparrow. All rights reserved.</em></p>
-		</footer>
+  <div id="app">Loading...</div>
 
 
-		<script>
-			// Code goes here...
-		</script>
+  <footer>
+    <p><em>Photos by Jack Sparrow. All rights reserved.</em></p>
+  </footer>
 
-	</body>
+
+  <script>
+    // template function
+    renderApp = function(pic){
+      let appHTML = '<div id="photos">';
+      
+      // add each photo
+      appHTML += pic.map(e => `<div id="${e.id}" class="photo">
+        <div>${e.name}</div>
+        <img src="${e.url}" alt="${e.description}"></img>
+        <div>£${e.price}</div>
+      </div>`).join('');
+      
+      appHTML += '</div>';
+      
+      // inject into app 
+      let app = document.getElementById("app");
+      app.innerHTML = appHTML;
+      return;
+    }
+
+    // load data from API
+    // vjsdata = []; //debugging
+    fetch('https://vanillajsacademy.com/api/photos.json')
+      .then(response => response.json())
+      .then(data => {
+        // console.log(data);
+        renderApp(data);
+      });
+
+  </script>
+
+</body>
+
 </html>
