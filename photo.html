@@ -27,14 +27,16 @@
   <script>
     // template function
     renderApp = function(pic){
-      let appHTML = '<div id="photos">';
+      let appHTML = '<div id="photo">';
+      let photoid = new URL(window.location.href).searchParams.get('id');
       
-      // add each photo
-      appHTML += pic.map(e => `<div id="${e.id}" class="photo">
-        <div>${e.name}</div>
-        <img src="${e.url}" alt="${e.description}"></img>
-        <div>£${e.price}</div>
-      </div>`).join('');
+      // find data for pic
+      photoArray = pic.filter(e => e.id == photoid)[0];
+        console.log(photoArray);
+      // add single photo
+      appHTML += `<p>${photoArray.name}</p>
+      <p><i>${photoArray.description}</i></p>
+      <img src="${photoArray.url}" alt="${photoArray.description}"></img>`;
       
       appHTML += '</div>';
       
