@@ -26,20 +26,27 @@
 
   <script>
     // template function
-    renderApp = function(pic){
+    renderApp = function (pic) {
       let appHTML = '<div id="photo">';
       let photoid = new URL(window.location.href).searchParams.get('id');
-      
+
       // find data for pic
-      photoArray = pic.filter(e => e.id == photoid)[0];
-        console.log(photoArray);
-      // add single photo
-      appHTML += `<p>${photoArray.name}</p>
-      <p><i>${photoArray.description}</i></p>
-      <img src="${photoArray.url}" alt="${photoArray.description}"></img>`;
-      
+      photoArray = pic.filter(e => e.id == photoid);
+
+      // error trap: pic not found
+      if (photoArray.length < 1) {
+        appHTML += `<h1>Uh oh</h1>
+        <p>Photo not found</p>`
+      } else {
+        photoArray = photoArray[0];
+        // add single photo
+        appHTML += `<p>${photoArray.name}</p>
+        <p><i>${photoArray.description}</i></p>
+        <img src="${photoArray.url}" alt="${photoArray.description}"></img>`;
+      }
+
       appHTML += '</div>';
-      
+
       // inject into app 
       let app = document.getElementById("app");
       app.innerHTML = appHTML;
