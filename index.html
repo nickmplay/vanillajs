@@ -6,6 +6,7 @@
   <title>Sparrow Photography</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="styles.css">
+  <script type="module" src="app.js"></script>
 </head>
 
 <body>
@@ -24,9 +25,11 @@
   </footer>
 
 
-  <script>
-    // template function
-    renderApp = function (pic) {
+  <script type="module">
+    import { callAPI } from "./app.js";
+    
+    // render shop front
+    function renderShopFront(pic) {
       let appHTML = '<div id="photos">';
 
       // add each photo
@@ -48,23 +51,8 @@
       return;
     }
 
-    // load data from API
-    // vjsdata = []; //debugging
-    async function callAPI(callback) {
-      try {
-        let response = await fetch('https://vanillajsacademy.com/api/photos.json');
-        if (!response.ok) throw response;
-        let data = await response.json();
-        callback(data);
-      } catch (error) {
-        console.warn(error);
-        callback();
-      }
-    }
-
     // init app
-    callAPI(renderApp);
-
+    callAPI(renderShopFront);
   </script>
 
 </body>

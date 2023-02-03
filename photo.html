@@ -24,11 +24,14 @@
   </footer>
 
 
-  <script>
+  <script type="module">
+    import { callAPI } from "./app.js";
+
     // template function
-    renderApp = function (pic) {
+    function renderSinglePhoto(pic) {
       let appHTML = '<div id="photo">';
       let photoid = new URL(window.location.href).searchParams.get('id');
+      let photoArray;
 
       // find data for pic
       if (!pic || !pic.length) {
@@ -37,7 +40,7 @@
         let app = document.getElementById("app");
         app.innerHTML = appHTML;
         return;
-        
+
       } else {
         photoArray = pic.filter(e => e.id == photoid);
       }
@@ -62,22 +65,8 @@
       return;
     }
 
-    // load data from API
-    // vjsdata = []; //debugging
-    async function callAPI(callback) {
-      try {
-        let response = await fetch('https://vanillajsacademy.com/api/photos.json');
-        if (!response.ok) throw response;
-        let data = await response.json();
-        callback(data);
-      } catch (error) {
-        console.warn(error);
-        callback();
-      }
-    }
-
     // init app
-    callAPI(renderApp);
+    callAPI(renderSinglePhoto);
 
   </script>
 
