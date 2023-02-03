@@ -31,7 +31,16 @@
       let photoid = new URL(window.location.href).searchParams.get('id');
 
       // find data for pic
-      photoArray = pic.filter(e => e.id == photoid);
+      if (!pic || !pic.length) {
+        appHTML += `<h1>Uh oh</h1>
+        <p>Photo not found</p></div>`;
+        let app = document.getElementById("app");
+        app.innerHTML = appHTML;
+        return;
+        
+      } else {
+        photoArray = pic.filter(e => e.id == photoid);
+      }
 
       // error trap: pic not found
       if (photoArray.length < 1) {
@@ -55,12 +64,20 @@
 
     // load data from API
     // vjsdata = []; //debugging
-    fetch('https://vanillajsacademy.com/api/photos.json')
-      .then(response => response.json())
-      .then(data => {
-        // console.log(data);
-        renderApp(data);
-      });
+    async function callAPI(callback) {
+      try {
+        let response = await fetch('https://vanillajsacademy.com/api/photos.json');
+        if (!response.ok) throw response;
+        let data = await response.json();
+        callback(data);
+      } catch (error) {
+        console.warn(error);
+        callback();
+      }
+    }
+
+    // init app
+    callAPI(renderApp);
 
   </script>
 

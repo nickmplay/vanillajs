@@ -26,18 +26,22 @@
 
   <script>
     // template function
-    renderApp = function(pic){
+    renderApp = function (pic) {
       let appHTML = '<div id="photos">';
-      
+
       // add each photo
-      appHTML += pic.map(e => `<div id="${e.id}" class="photo">
+      if (!pic || !pic.length) {
+        appHTML += `<p>Error loading data</p>`;
+      } else {
+        appHTML += pic.map(e => `<div id="${e.id}" class="photo">
         <div>${e.name}</div>
         <a href="photo.html?id=${e.id}"><img src="${e.url}" alt="${e.description}"></img></a>
         <div>£${e.price}</div>
-      </div>`).join('');
-      
+        </div>`).join('');
+      }
+
       appHTML += '</div>';
-      
+
       // inject into app 
       let app = document.getElementById("app");
       app.innerHTML = appHTML;
@@ -46,12 +50,20 @@
 
     // load data from API
     // vjsdata = []; //debugging
-    fetch('https://vanillajsacademy.com/api/photos.json')
-      .then(response => response.json())
-      .then(data => {
-        // console.log(data);
-        renderApp(data);
-      });
+    async function callAPI(callback) {
+      try {
+        let response = await fetch('https://vanillajsacademy.com/api/photos.json');
+        if (!response.ok) throw response;
+        let data = await response.json();
+        callback(data);
+      } catch (error) {
+        console.warn(error);
+        callback();
+      }
+    }
+
+    // init app
+    callAPI(renderApp);
 
   </script>
 
