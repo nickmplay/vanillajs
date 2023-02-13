@@ -17,7 +17,7 @@ function addToCart (id) {
 function removeFromCart(id, name){
 	delete cart[id];
 	// console.log(id);
-	alert(`${name} succesfully removed!`)
+	
 	localStorage.setItem('cart', JSON.stringify(cart));
 }
 
