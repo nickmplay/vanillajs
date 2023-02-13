@@ -15,7 +15,7 @@
 				<a aria-current="page" href="checkout.html"><span aria-hidden="true">&#x1f6d2;</span> Cart <span id="cart-count"></span></a>
 			</div>
 		</nav>
-		
+
 		<h1>Sparrow Photography</h1>
 
 		<div id="app">Loading...</div>
@@ -54,7 +54,7 @@
 						${photos.map(function (photo) {
 							return `
 								<div class="photo">
-									<a href="/photo.html?id=${encodeURIComponent(photo.id)}">
+									<a href="./photo.html?id=${encodeURIComponent(photo.id)}">
 										<img alt="${photo.description}" src="${photo.url}">
 										<div>${photo.name}</div>
 									</a>
