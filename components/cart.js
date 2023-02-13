@@ -13,14 +13,25 @@ function addToCart (id) {
 	localStorage.setItem('cart', JSON.stringify(cart));
 }
 
+
+function removeFromCart(id, name){
+	delete cart[id];
+	// console.log(id);
+	alert(`${name} succesfully removed!`)
+	localStorage.setItem('cart', JSON.stringify(cart));
+}
+
 /**
  * Check if an item is in the cart
  * @param  {String}  id The photo ID
  * @return {Boolean}    If true, the item is in the cart
  */
 function inCart (id) {
+	// console.log(cart);
 	return cart[id];
 }
+
+
 
 /**
  * Get the cart count HTML
@@ -34,4 +45,4 @@ function cartCountHTML () {
 component('#cart-count', cartCountHTML);
 
 
-export {addToCart, inCart};
+export {addToCart, inCart, removeFromCart};

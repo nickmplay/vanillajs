@@ -26,20 +26,22 @@
 
 
 		<script type="module">
-			import {render} from 'https://cdn.jsdelivr.net/npm/reefjs@12/dist/reef.es.min.js';
+			import {component} from 'https://cdn.jsdelivr.net/npm/reefjs@12/dist/reef.es.min.js';
 			import {getPhotos} from './components/api.js';
-			import {inCart} from './components/cart.js';
+			import {inCart, removeFromCart} from './components/cart.js';
 
 
 			// Get the #app element
-			let app = document.querySelector('#app');
+			// let app = document.querySelector('#app');
+
+      // hold the photos data
+      let photos = [];
 
 			/**
 			 * Generate the cart HTML
 			 * @param  {Array}  photos The photo data
-			 * @return {String}        The cart HTML string
 			 */
-			function cartHTML (photos) {
+			function cartHTML () {
 
 				// Get the photos that are in the cart
 				let photosInCart = photos.filter(function (photo) {
@@ -59,6 +61,7 @@
 								<th width="150">Photo</th>
 								<th>Name</th>
 								<th class="text-right">Price</th>
+                <th>Remove</tr>
 							</tr>
 						</thead>
 						<tbody>
@@ -68,6 +71,7 @@
 										<td><img alt="${photo.description}" src="${photo.url}"></td>
 										<td>${photo.name}</td>
 										<td class="text-right">$${photo.price}</td>
+                    <td><button data-remove-from-cart="${photo.id}">Remove</button></td>
 									</tr>`;
 
 							}).join('')}
@@ -81,9 +85,22 @@
 
 			}
 
+      // remove btn event handler
+      function removeHandler(event){
+
+        // only run if select
+        let id = event.target.getAttribute('data-remove-from-cart')
+        if(!id) return;
+
+        // console.log(id);
+        removeFromCart(id, photos.filter(e => e.id == id)[0].name);
+      }
+
 			// Initialize
-			getPhotos().then(function (photos) {
-				render(app, cartHTML(photos));
+			getPhotos().then(function (data) {
+        photos = data;
+				component('#app', cartHTML);
+        document.addEventListener('click', removeHandler);
 			});
 		</script>
 
