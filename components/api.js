@@ -1,3 +1,6 @@
+import {photosURL} from './endpoints.js';
+
+
 /**
  * Save photos to session storage
  * @param  {Array} photos The photo data
@@ -27,7 +30,7 @@ async function getPhotos () {
 
 	// Otherwise, fetch fresh data from the API
 	try {
-		let response = await fetch('https://vanillajsacademy.com/api/photos.json');
+		let response = await fetch(photosURL);
 		if (!response.ok) throw response;
 		let photos = await response.json();
 		savePhotos(photos);

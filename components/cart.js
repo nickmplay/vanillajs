@@ -18,8 +18,18 @@ function addToCart (id) {
  * @param  {String} id The photo ID
  */
 function removeFromCart (id) {
-	delete cart[id];
-	localStorage.setItem('cart', JSON.stringify(cart));
+    delete cart[id];
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+/**
+ * Empty cart
+ */
+function emptyCart () {
+    for (let key in cart) {
+        delete cart[key];
+    }
+    localStorage.removeItem('cart');
 }
 
 /**
@@ -36,11 +46,22 @@ function inCart (id) {
  * @return {String} The cart count HTML string
  */
 function cartCountHTML () {
-	return `(${Object.keys(cart).length})`;
+    return `(${Object.keys(cart).length})`;
+}
+
+/**
+ * Get data for just photos that are in the cart
+ * @param  {Array} photos All photos
+ * @return {Array}        Photos in the cart
+ */
+function getPhotosInCart (photos) {
+    return photos.filter(function (photo) {
+        return inCart(photo.id);
+    });
 }
 
 // Create cart count component
 component('#cart-count', cartCountHTML);
 
 
-export {addToCart, removeFromCart, inCart};
+export {addToCart, removeFromCart, emptyCart, inCart, getPhotosInCart};
