@@ -12,10 +12,10 @@
 		<nav class="nav">
 			<a class="logo" href="index.html"><strong>Sparrow Photography</strong></a>
 			<div class="nav-items">
-				<a aria-current="page" href="checkout.html"><span aria-hidden="true">&#x1f6d2;</span> Cart <span id="cart-count"></span></a>
+				<a href="checkout.html"><span aria-hidden="true">&#x1f6d2;</span> Cart <span id="cart-count"></span></a>
 			</div>
 		</nav>
-		
+
 		<div id="app">Loading...</div>
 
 
@@ -28,30 +28,11 @@
 			import {component} from 'https://cdn.jsdelivr.net/npm/reefjs@12/dist/reef.es.min.js';
 			import {getPhotos} from './components/api.js';
 			import {addToCart, inCart} from './components/cart.js';
+			import {getPhotoID, getPhotoByID} from './components/utilities.js';
 
 
 			// Hold the photo data
 			let photos = [];
-
-			/**
-			 * Get the photo ID from the URL
-			 * @return {String} The photo ID
-			 */
-			function getPhotoID () {
-				return new URL(window.location.href).searchParams.get('id');
-			}
-
-			/**
-			 * Get a photo by its ID
-			 * @param  {Array}  photos All photos
-			 * @param  {String} id     The ID of the photo to get
-			 * @return {Object}        The photo data
-			 */
-			function getPhotoByID (photos, id) {
-				return photos.find(function (photo) {
-					return photo.id === id;
-				});
-			}
 
 			/**
 			 * The HTML string for when no photo is found
@@ -88,7 +69,7 @@
 					<p aria-live="polite">
 						${
 							inCart(photo.id) ?
-							`<em>"${photo.name}" added to cart</em>` :
+							`<a href="checkout.html"><em>"${photo.name}" added to cart</em></a>` :
 							`<button data-add-to-cart="${photo.id}">Add to Cart - $${photo.price}</button>`
 						}
 					</p>`;
