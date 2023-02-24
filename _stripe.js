@@ -1,3 +1,9 @@
+let headers = new Headers({
+	'Access-Control-Allow-Origin': 'http://127.0.0.1:5500',
+	'Access-Control-Allow-Methods': 'HEAD, POST, OPTIONS',
+	'Access-Control-Allow-Headers': '*'
+});
+
 /**
  * Create a PHP-style query string from an object
  * @param  {Object} data   The data to serialize into a string
@@ -40,12 +46,6 @@ function buildQuery (data, prefix) {
  */
 async function handleRequest(request) {
 
-	let headers = new Headers({
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Methods': 'HEAD, POST, OPTIONS',
-		'Access-Control-Allow-Headers': '*'
-	});
-
 	// Catch-all for non-POST request types
 	if (request.method !== 'POST') {
 		return new Response('ok', {
@@ -58,8 +58,28 @@ async function handleRequest(request) {
 	try {
 
 		// Get the request data
-		let body = await request.json();
-		let {line_items, success_url, cancel_url} = body;
+		let {cart, success_url, cancel_url} = await request.json();
+
+		// Get photo data from database
+		let photos = await PHOTOS.get('photos', {type: 'json'});
+
+		// Create line items
+		let line_items = photos.filter(function (photo) {
+			return cart.includes(photo.id);
+		}).map(function (item) {
+			return {
+				price_data: {
+					currency: 'usd',
+					product_data: {
+						name: item.name,
+						description: item.description,
+						images: [item.url]
+					},
+					unit_amount: item.price * 100,
+				},
+				quantity: 1,
+			};
+		});
 
 		// Call the Stripe API
 		let stripeRequest = await fetch('https://api.stripe.com/v1/checkout/sessions', {
