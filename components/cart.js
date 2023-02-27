@@ -18,18 +18,53 @@ function addToCart (id) {
  * @param  {String} id The photo ID
  */
 function removeFromCart (id) {
-    delete cart[id];
-    localStorage.setItem('cart', JSON.stringify(cart));
+	delete cart[id];
+	localStorage.setItem('cart', JSON.stringify(cart));
 }
 
 /**
  * Empty cart
  */
 function emptyCart () {
-    for (let key in cart) {
-        delete cart[key];
-    }
-    localStorage.removeItem('cart');
+	cart = store({});
+	localStorage.removeItem('cart');
+}
+
+/**
+ * Get cart data from the URL
+ * @return {Object} Cart data
+ */
+function getCartFromURL () {
+	let items = new URL(window.location.href).searchParams.get('cart');
+	if (!items) return;
+	return items.split(',');
+}
+
+/**
+ * Restore the cart
+ */
+function restoreCart () {
+
+	// Check for cached cart in URL
+	let cartInURL = getCartFromURL();
+	if (!cartInURL) return;
+
+	// Empty the current cart data, if any
+	emptyCart();
+
+	// Load new cart data
+	for (let id of cartInURL) {
+		cart[id] = true;
+	}
+
+	// Save to local storage
+	localStorage.setItem('cart', JSON.stringify(cart));
+
+	// Update the URL
+	let url = new URL(window.location.href);
+	url.searchParams.delete('cart');
+	history.replaceState(history.state, '', url);
+
 }
 
 /**
@@ -46,22 +81,35 @@ function inCart (id) {
  * @return {String} The cart count HTML string
  */
 function cartCountHTML () {
-    return `(${Object.keys(cart).length})`;
+	return `(${Object.keys(cart).length})`;
 }
 
 /**
  * Get data for just photos that are in the cart
- * @param  {Array} photos All photos
- * @return {Array}        Photos in the cart
+ * @param  {Array}  photos All photos
+ * @return {Array}         Photos in the cart
  */
 function getPhotosInCart (photos) {
-    return photos.filter(function (photo) {
-        return inCart(photo.id);
-    });
+	return photos.filter(function (photo) {
+		return inCart(photo.id);
+	});
+}
+
+/**
+ * Get data for just photos that are in the cart
+ * @param  {Array}  photos All photos
+ * @return {Array}         Photos in the cart
+ */
+function getPhotosFromURL (photos) {
+	let cart = getCartFromURL();
+	if (!cart) return [];
+	return photos.filter(function (photo) {
+		return cart.includes(photo.id);
+	});
 }
 
 // Create cart count component
 component('#cart-count', cartCountHTML);
 
 
-export {addToCart, removeFromCart, emptyCart, inCart, getPhotosInCart};
+export {addToCart, removeFromCart, emptyCart, restoreCart, inCart, getPhotosInCart, getPhotosFromURL};

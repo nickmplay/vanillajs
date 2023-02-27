@@ -28,7 +28,7 @@
 		<script type="module">
 			import {store, component} from 'https://cdn.jsdelivr.net/npm/reefjs@12/dist/reef.es.min.js';
 			import {getPhotos} from './components/api.js';
-			import {removeFromCart, getPhotosInCart} from './components/cart.js';
+			import {removeFromCart, emptyCart, restoreCart, getPhotosInCart} from './components/cart.js';
 			import {getPhotoByID} from './components/utilities.js';
 			import {stripeURL} from './components/endpoints.js';
 
@@ -141,6 +141,11 @@
 
 				try {
 
+					// Get the items in the cart
+					let cart = getPhotosInCart(photos).map(function (photo) {
+						return photo.id;
+					});
+
 					// Call the API
 					let sessionRequest = await fetch(stripeURL, {
 						method: 'POST',
@@ -148,11 +153,9 @@
 							'Content-type': 'application/json'
 						},
 						body: JSON.stringify({
-							cart: getPhotosInCart(photos).map(function (photo) {
-								return photo.id;
-							}),
-							success_url: 'http://127.0.0.1:5500/success.html',
-							cancel_url: 'http://127.0.0.1:5500/checkout.html',
+							cart,
+							success_url: `http://127.0.0.1:5500/success.html?cart=${encodeURIComponent(cart)}`,
+							cancel_url: `http://127.0.0.1:5500/checkout.html?cart=${encodeURIComponent(cart)}`
 						})
 					});
 
@@ -161,6 +164,9 @@
 
 					// Get the session data
 					let session = await sessionRequest.json();
+
+					// Empty cart
+					emptyCart();
 
 					// Redirect to Stripe Checkout
 					window.location.href = session.url;
@@ -185,6 +191,7 @@
 			// Initialize
 			getPhotos().then(function (data) {
 				photos = data;
+				restoreCart();
 				component('#app', cartHTML);
 				document.addEventListener('click', clickHandler);
 			});
