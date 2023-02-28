@@ -116,3 +116,18 @@ td {
 .text-right {
 	text-align: right;
 }
+
+
+/**
+ * Forms
+ */
+
+label,
+input {
+	display: block;
+	width: 100%;
+}
+
+input {
+	margin-bottom: 1em;
+}
