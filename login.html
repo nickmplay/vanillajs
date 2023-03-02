@@ -31,6 +31,7 @@
 
 		<script type="module">
 			import {authURL} from './components/endpoints.js';
+			import {getToken, setToken} from './components/token.js';
 
 
 			// Get DOM elements
@@ -108,8 +109,12 @@
 					// Get the token from the response
 					let {token} = await login.json();
 
+					// Save the token to localStorage
+					setToken(token);
+
 					// Redirect to dashboard
-					announce(`Success! Your authentication token is: ${token}`);
+					announce('Success! Redirecting to the dashboard.');
+					window.location.href = 'dashboard.html';
 
 				} catch (error) {
 					form.reset();
@@ -117,6 +122,12 @@
 					announce('Something went wrong. Please try again.');
 				}
 
+			}
+
+			// If the user is already logged in, redirect them to the dashboard
+			if (getToken()) {
+				announce(`You're already logged in. Redirecting to the dashboard.`);
+				window.location.href = 'dashboard.html';
 			}
 
 			// Listen for submit events

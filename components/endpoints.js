@@ -5,7 +5,7 @@ let photosURL = 'https://path-to-your.workers.dev';
 let stripeURL = 'https://path-to-stripe.workers.dev';
 
 // The authentication API endpoint
-let authURL = 'https://vanillajsacademy.com/api/login.php';
+let authURL = 'https://ask-heart-user.nickmontagni.workers.dev';
 
 
 export {photosURL, stripeURL, authURL};
