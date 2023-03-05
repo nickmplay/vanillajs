@@ -10,7 +10,7 @@
 	<body>
 
 		<nav class="nav">
-			<a class="logo" href="index.html"><strong>Sparrow Photography</strong></a>
+			<a class="logo" href="dashboard.html"><strong>Sparrow Photography Dashboard</strong></a>
 			<div class="nav-items" aria-live="polite">
 				<a href="logout.html">Logout</a>
 			</div>
@@ -18,52 +18,52 @@
 
 		<h1>Dashboard</h1>
 
-		<p>You're logged in...</p>
+		<div id="app">Loading...</div>
+
+		<footer>
+			<p><em>Photos by Jack Sparrow. All rights reserved.</em></p>
+		</footer>
 
 
 		<script type="module">
-			import {authURL} from './components/endpoints.js';
-			import {getToken, removeToken} from './components/token.js';
+			import {render} from 'https://cdn.jsdelivr.net/npm/reefjs@12/dist/reef.es.min.js';
+			import {getPhotos} from './components/dashboard.js';
+			import './components/logged-in.js';
 
 
 			/**
-			 * Log the user out
-			 * @return {Event} event The event object
+			 * Generate an HTML string of photos
+			 * @param  {Object} photos The photo data
+			 * @return {String}        A list of photos
 			 */
-			function clickHandler (event) {
+			function photoHTML (photos) {
 
-				// Only run on logout links
-				if (!event.target.matches('[href*="logout.html"]')) return;
+				// If there are no photos
+				if (!photos.length) {
+					return '<p>There are no photos.</p>';
+				}
 
-				// Stop link from leaving page
-				event.preventDefault();
-
-				// Update the link
-				event.target.parentNode.textContent = 'Logging out...';
-
-				// Call the logout API
-				fetch(authURL, {
-					method: 'DELETE',
-					headers: {
-						'Authorization': `Bearer ${getToken()}`
-					}
-				});
-
-				// Remove the token
-				removeToken();
-
-				// Redirect to login page
-				window.location.href = 'login.html';
+				// Otherwise, show photos
+				return `
+					<p>Click on a photo to edit it.</p>
+					<div id="photos">
+						${photos.map(function (photo) {
+							return `
+								<div class="photo">
+									<a href="edit.html?id=${photo.id}">
+										<img alt="${photo.description}" src="${photo.url}">
+										<div>${photo.name} - $${photo.price}</div>
+									</a>
+								</div>`;
+						}).join('')}
+					</div>`;
 
 			}
 
-			// Check if user token is valid
-			if (!getToken()) {
-				window.location.href = 'login.html';
-			}
-
-			// Otherwise, listen for click events on the logout link
-			document.addEventListener('click', clickHandler);
+			// Initialize
+			getPhotos().then(function (photos) {
+				render('#app', photoHTML(photos));
+			});
 		</script>
 
 	</body>
