@@ -21,5 +21,26 @@ async function getPhotos () {
 
 }
 
+/**
+ * Edit photo data
+ * @param {Object} data The photo data
+ */
+async function editPhoto (data) {
 
-export {getPhotos};
+	// Get photos from API
+	let response = await fetch(dashURL, {
+		method: 'PUT',
+		body: JSON.stringify(data),
+		headers: {
+			'Content-type': 'application/json',
+			'Authorization': `Bearer ${getToken()}`
+		}
+	});
+
+	// Return status
+	return await response.text();
+
+}
+
+
+export {getPhotos, editPhoto};
