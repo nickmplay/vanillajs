@@ -133,6 +133,67 @@ async function handlePUT (request) {
 }
 
 /**
+ * Handle POST requests
+ * @param  {Request}  request The request object
+ * @return {Response}         The response object
+ */
+async function handlePOST (request) {
+
+	// Get photos from database
+	let photos = await PHOTOS.get('photos', {type: 'json'});
+
+	// Get the photo details
+	let {id, name, url, description, price} = await request.json();
+
+	// If there are missing details, return an error
+	if (!id || !name || !url || !description || !price) {
+		return new Response('Please provide all required data', {
+			status: 400,
+			headers: headers
+		});
+	}
+
+	// Make sure price is a number
+	price = parseFloat(price);
+	if (Number.isNaN(price)) {
+		return new Response('Price must be a valid number', {
+			status: 400,
+			headers: headers
+		});
+	}
+
+	// Check for existing photo with that ID
+	let index = getPhotoIndexByID(photos, id);
+
+	// If there's already a photo with that ID, return an error
+	if (index > -1) {
+		return new Response('A photo with this ID already exists. Please use a different one.', {
+			status: 400,
+			headers: headers
+		});
+	}
+
+	// Otherwise, add the photo
+	photos.push({id, name, url, description, price});
+	let added = await PHOTOS.put('photos', JSON.stringify(photos));
+
+	// If update failed
+	if (added === null) {
+		return new Response('Unable to add the photo. Please try again.', {
+			status: 500,
+			headers: headers
+		});
+	}
+
+	// return a Response object
+	return new Response('Photo added', {
+		status: 200,
+		headers: headers
+	});
+
+}
+
+/**
  * Respond to the request
  * @param {Request} request
  */
@@ -166,6 +227,11 @@ async function handleRequest(request) {
 	// PUT requests
 	if (request.method === 'PUT') {
 		return await handlePUT(request);
+	}
+
+	// POST requests
+	if (request.method === 'POST') {
+		return await handlePOST(request);
 	}
 
 	// Everything else

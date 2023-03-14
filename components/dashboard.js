@@ -42,5 +42,30 @@ async function editPhoto (data) {
 
 }
 
+/**
+ * Add a new photo
+ * @param {Object} data The photo data
+ */
+async function addPhoto (data) {
 
-export {getPhotos, editPhoto};
+	// Get photos from API
+	let response = await fetch(dashURL, {
+		method: 'POST',
+		body: JSON.stringify(data),
+		headers: {
+			'Content-type': 'application/json',
+			'Authorization': `Bearer ${getToken()}`
+		}
+	});
+
+
+	// Return status
+	return {
+		ok: response.ok,
+		msg: await response.text()
+	};
+
+}
+
+
+export {getPhotos, editPhoto, addPhoto};
