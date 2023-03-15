@@ -10,6 +10,13 @@ function savePhotos (photos) {
 }
 
 /**
+ * Clear photos from session storage
+ */
+function clearPhotos () {
+	sessionStorage.removeItem('photos');
+}
+
+/**
  * Get saved photo data from session storage
  * @return {Array} The photo data
  */
@@ -43,4 +50,4 @@ async function getPhotos () {
 }
 
 
-export {getPhotos};
+export {getPhotos, clearPhotos};

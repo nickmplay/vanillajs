@@ -67,5 +67,29 @@ async function addPhoto (data) {
 
 }
 
+/**
+ * Delete a new photo
+ * @param {Object} data The photo data
+ */
+async function deletePhoto (data) {
 
-export {getPhotos, editPhoto, addPhoto};
+	// Get photos from API
+	let response = await fetch(dashURL, {
+		method: 'DELETE',
+		body: JSON.stringify(data),
+		headers: {
+			'Content-type': 'application/json',
+			'Authorization': `Bearer ${getToken()}`
+		}
+	});
+
+
+	// Return status
+	return {
+		ok: response.ok,
+		msg: await response.text()
+	};
+
+}
+
+export {getPhotos, editPhoto, addPhoto, deletePhoto};

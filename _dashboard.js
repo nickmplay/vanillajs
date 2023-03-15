@@ -133,6 +133,58 @@ async function handlePUT (request) {
 }
 
 /**
+ * Handle DELETE requests
+ * @param  {Request}  request The request object
+ * @return {Response}         The response object
+ */
+async function handleDELETE (request) {
+
+	// Get photos from database
+	let photos = await PHOTOS.get('photos', {type: 'json'});
+
+	// Get the photo details
+	let {id} = await request.json();
+
+	// If there is no id, return an error
+	if (!id) {
+		return new Response('Please provide photo ID', {
+			status: 400,
+			headers: headers
+		});
+	}
+
+	// Get the photo index
+	let index = getPhotoIndexByID(photos, id);
+
+	// If there's no matching photo, return an error
+	if (index < 0) {
+		return new Response('Photo not found', {
+			status: 404,
+			headers: headers
+		});
+	}
+
+	// Otherwise, delete the photo
+	photos = photos.filter((e, i) => i != index);
+	let updated = await PHOTOS.put('photos', JSON.stringify(photos));
+
+	// If update failed
+	if (updated === null) {
+		return new Response('Unable to delete. Please try again.', {
+			status: 500,
+			headers: headers
+		});
+	}
+
+	// return a Response object
+	return new Response('Photo deleted', {
+		status: 200,
+		headers: headers
+	});
+
+}
+
+/**
  * Handle POST requests
  * @param  {Request}  request The request object
  * @return {Response}         The response object
@@ -232,6 +284,11 @@ async function handleRequest(request) {
 	// POST requests
 	if (request.method === 'POST') {
 		return await handlePOST(request);
+	}
+
+	// DELETE requests
+	if (request.method === 'DELETE') {
+		return await handleDELETE(request);
 	}
 
 	// Everything else
